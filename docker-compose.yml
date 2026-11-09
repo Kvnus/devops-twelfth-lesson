@@ -11,8 +11,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      # проверка по TCP (не через сокет): на время инициализации MySQL слушает только сокет
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --silent"]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -24,7 +24,6 @@ services:
       db:
         condition: service_healthy
     volumes:
-      # приложение читает ROOT/Config.properties относительно рабочей директории Tomcat
       - ./docker/Config.properties:/usr/local/tomcat/ROOT/Config.properties:ro
     ports:
       - "8080:8080"
